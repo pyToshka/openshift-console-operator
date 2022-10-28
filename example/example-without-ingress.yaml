@@ -1,0 +1,23 @@
+---
+apiVersion: openshift.io/v1
+kind: console
+metadata:
+  name: console
+  namespace: console
+  labels:
+    app: console
+  annotations:
+    stack: console
+spec:
+  oidc_id: "fake"
+  oidc_issuer_url: "https://fake.com"
+  oidc_secret: "fake"
+  image_url: "quay.io/openshift/origin-console:4.9.0"
+  console_base_url: "https://fake.example.com"
+  grafana_public_url: "https://grafana.example.com"
+  prometheus_url: "https://prom.example.com"
+  alert_manager_url: "https://alerts.example.com"
+  cpu_limit: "500m"
+  cpu_request: "200m"
+  memory_limit: "512Mi"
+  memory_request: "256Mi"

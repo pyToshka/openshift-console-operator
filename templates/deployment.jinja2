@@ -1,0 +1,89 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    app.kubernetes.io/instance: {{ name | default('openshift-console') }}
+    app.kubernetes.io/name: {{ name | default('openshift-console') }}
+    app.kubernetes.io/version: {{ version }}
+    instance: {{ name | default('openshift-console') }}
+    name: {{ name | default('openshift-console') }}
+  labels:
+    app.kubernetes.io/instance: {{ name | default('openshift-console') }}
+    app.kubernetes.io/name: {{ name | default('openshift-console') }}
+    app.kubernetes.io/version: {{ version }}
+    instance: {{ name | default('openshift-console') }}
+    name: {{ name | default('openshift-console') }}
+  name: {{ name | default('openshift-console') }}
+  namespace: {{ namespace }}
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ name | default('openshift-console') }}
+      app.kubernetes.io/name: {{ name | default('openshift-console') }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: {{ name | default('openshift-console') }}
+        app.kubernetes.io/name: {{ name | default('openshift-console') }}
+        app.kubernetes.io/version: {{ version }}
+        instance: {{ name | default('openshift-console') }}
+        name: {{ name | default('openshift-console') }}
+    spec:
+      containers:
+      - args:
+        - --public-dir=/opt/bridge/static
+        - -v
+        - "5"
+        command:
+        - /opt/bridge/bin/bridge
+        env:
+        - name: BRIDGE_DOCUMENTATION_BASE_URL
+          value: https://kubernetes.io/docs/
+        - name: BRIDGE_GRAFANA_PUBLIC_URL
+          value: {{ grafana_public_url }}
+        - name: BRIDGE_KUBECTL_CLIENT_ID
+          value: {{ oidc_id }}
+        - name: BRIDGE_KUBECTL_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: secret
+              name: {{ name | default('openshift-console') }}-secret
+        - name: BRIDGE_BASE_ADDRESS
+          value: {{ console_base_url }}
+        - name: BRIDGE_USER_AUTH
+          value: oidc
+        - name: BRIDGE_K8S_AUTH
+          value: oidc
+        - name: BRIDGE_USER_AUTH_OIDC_ISSUER_URL
+          value: {{ oidc_issuer_url }}
+        - name: BRIDGE_USER_AUTH_OIDC_CLIENT_ID
+          value: {{ oidc_id }}
+        - name: BRIDGE_USER_AUTH_OIDC_CLIENT_SECRET
+          value: {{ oidc_secret }}
+        - name: BRIDGE_K8S_MODE
+          value: off-cluster
+        - name: BRIDGE_K8S_MODE_OFF_CLUSTER_ALERTMANAGER
+          value: {{ alertmanager_url | default('http://alertmanager-main.monitoring:9093') }}
+        - name: BRIDGE_K8S_MODE_OFF_CLUSTER_SKIP_VERIFY_TLS
+          value: "true"
+        - name: BRIDGE_K8S_MODE_OFF_CLUSTER_THANOS
+          value: {{ prometheus_url | default('http://prometheus-k8s.monitoring:9090') }}
+        - name: BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT
+          value: https://kubernetes.default.svc.cluster.local.
+        image: {{ image_url | default('quay.io/openshift/origin-console:4.9.0') }}
+        name: openshift-console
+        ports:
+        - containerPort: 9000
+          name: http
+        resources:
+          limits:
+            cpu: {{ cpu_limit }}
+            memory: {{ memory_limit }}
+          requests:
+            cpu: {{ cpu_request  }}
+            memory: {{ memory_request }}
+      nodeSelector: {}
+      tolerations: []

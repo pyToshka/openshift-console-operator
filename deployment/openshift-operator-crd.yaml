@@ -1,0 +1,152 @@
+# A CRD for Wazuh operator
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: console.openshift.io
+spec:
+  scope: Namespaced
+  group: openshift.io
+  names:
+    kind: console
+    plural: console
+    singular: console
+    shortNames:
+      - co
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+              properties:
+                oidc_id:
+                  type: string
+                  default: None
+                oidc_issuer_url:
+                  type: string
+                  default: "https://dex.example.com"
+                oidc_secret:
+                  type: string
+                  default: None
+                image_url:
+                  type: string
+                  default: "quay.io/openshift/origin-console:4.9.0"
+                console_base_url:
+                  type: string
+                  default: None
+                grafana_public_url:
+                   type: string
+                   default: None
+                prometheus_url:
+                   type: string
+                   default: "http://prometheus-k8s.monitoring:9090"
+                alert_manager_url:
+                   type: string
+                   default: "http://alertmanager-main.monitoring:9093"
+                cpu_limit:
+                   type: string
+                   default: "500m"
+                memory_limit:
+                   type: string
+                   default: "256Mi"
+                cpu_request:
+                   type: string
+                   default: "500m"
+                memory_request:
+                   type: string
+                   default: "256Mi"
+                domain_name:
+                   type: string
+                   default: None
+                enable_ingress:
+                  type: boolean
+                  default: False
+            status:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+      additionalPrinterColumns:
+        - name: Client id
+          type: string
+          priority: 0
+          jsonPath: .spec.oidc_id
+          description: The OIDC/OAuth2 Client ID
+        - name: OIDC url
+          type: string
+          priority: 0
+          jsonPath: .spec.oidc_issuer_url
+          description: The OIDC/OAuth2 issuer URL
+        - name: Client secret
+          type: string
+          priority: 0
+          jsonPath: .spec.oidc_secret
+          description: The OIDC OAuth2 Client Secret
+        - name: Docker image
+          type: string
+          priority: 0
+          jsonPath: .spec.image_url
+          description: The Docker image for OpenShift console deployment
+        - name: Base url
+          type: string
+          priority: 0
+          jsonPath: .spec.console_base_url
+          description: OpenShift Console base url
+        - name: Grafana url
+          type: string
+          priority: 0
+          jsonPath: .spec.grafana_public_url
+          description: Public URL of the cluster's Grafana server
+        - name: Prometheus url
+          type: string
+          priority: 0
+          jsonPath: .spec.prometheus_url
+          description: Public URL of the cluster's Prometheus server
+        - name: AlertManager url
+          type: string
+          priority: 0
+          jsonPath: .spec.alert_manager_url
+          description: Public URL of the cluster's AlertManager server
+        - name: Cpu limit
+          type: string
+          priority: 0
+          jsonPath: .spec.cpu_limit
+          description: Cpu limit for OpenShift container
+        - name: Memory limit
+          type: string
+          priority: 0
+          jsonPath: .spec.memory_limit
+          description: Memory limits for Openshift console container
+        - name: Cpu request
+          type: string
+          priority: 0
+          jsonPath: .spec.cpu_request
+          description: Cpu request for OpenShift console container
+        - name: Memory request
+          type: string
+          priority: 0
+          jsonPath: .spec.memory_request
+          description: Memory request for Openshift console container
+        - name: Ingress Hostname
+          type: string
+          priority: 0
+          jsonPath: .spec.domain_name
+          description: Domain name for ingress, using only if enable_ingress true
+        - name: Use ingress
+          type: boolean
+          priority: 0
+          jsonPath: .spec.enable_ingress
+          description: Create ingress for OpneShift console, ingress will be created only if true
+        - name: Children
+          type: string
+          priority: 0
+          jsonPath: .status.create_fn.children
+          description: The children pods created.
+        - name: Message
+          type: string
+          priority: 0
+          jsonPath: .status.create_fn.message
+          description: As returned from the handler (sometimes).

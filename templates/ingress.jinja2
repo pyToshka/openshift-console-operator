@@ -1,0 +1,30 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    app.kubernetes.io/instance: {{ name | default('openshift-console') }}
+    app.kubernetes.io/name: {{ name | default('openshift-console') }}
+    app.kubernetes.io/version: {{ version }}
+    instance: {{ name | default('openshift-console') }}
+    name: {{ name | default('openshift-console') }}
+  labels:
+    app.kubernetes.io/instance: {{ name | default('openshift-console') }}
+    app.kubernetes.io/name: {{ name | default('openshift-console') }}
+    app.kubernetes.io/version: {{ version }}
+    instance: {{ name | default('openshift-console') }}
+    name: {{ name | default('openshift-console') }}
+  name: {{ name | default('openshift-console') }}
+  namespace: {{ namespace }}
+spec:
+  rules:
+  - host: {{ domain_name }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: {{ name | default('openshift-console') }}
+            port:
+              name: http
+        path: /
+        pathType: ImplementationSpecific
