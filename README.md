@@ -15,7 +15,7 @@ Experimental Kubernetes operator for deployment [OpenShift console ](https://git
 | `image_url` | The Docker image for OpenShift console deployment | String | `quay.io/openshift/origin-console:4.9.0` | `no` |
 | `console_base_url` | OpenShift Console base url | | `None` | |
 | `grafana_public_url` | Public URL of the cluster's Grafana server | String | `None` | `yes` |
-| `prometheus_ur`l | Public URL of the cluster's Prometheus server | String | `http://prometheus-k8s.monitoring:9090` | `yes` |
+| `prometheus_ur` | Public URL of the cluster's Prometheus server | String | `http://prometheus-k8s.monitoring:9090` | `yes` |
 | alert_manager_url | `Public URL of the cluster's AlertManager server` | String | `http://alertmanager-main.monitoring:9093` | `yes` |
 | `cpu_limit` | Cpu limit for OpenShift container | String | `500m` | `no` |
 | `memory_limit` | Memory limits of the Openshift console container | String | `256Mi` | `no` |
@@ -31,7 +31,7 @@ Checkout repository and change directory to ` openshift-console-operator`
 Apply Kubernetes manifests
 
 ```shell
-kubectl delete -f deployment
+kubectl apply -f deployment
 ```
 
 ## Build docker image
